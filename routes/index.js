@@ -1,9 +1,11 @@
 
+const { Versions, FileSize, ReadFirmware } = require('../helpers')
 const { verified } = require('../middleware/passport-upload')
 const fileUpload = require('../middleware/file-upload')
 const dataUpload = require('../middleware/data-upload')
+
+const path = require('path')
 const { Router } = require('express')
-const { Versions, FileSize, ReadFirmware } = require('../helpers')
 const router = Router()
 
 /**
@@ -13,9 +15,9 @@ const router = Router()
  *  aeid
  * }
  */
-router.get('/:aeid/version', (req, res) => {
+router.get('/:aeid/version', async (req, res) => {
   const { aeid } = req.params
-  const data = Versions(aeid)
+  const data = await Versions(aeid)
   if (data) {
     const { versions, nversion } = data
     res.json(versions[0])
@@ -32,10 +34,25 @@ router.get('/:aeid/version', (req, res) => {
  *  version
  * }
  */
-router.get('/:aeid/:version/size', (req, res) => {
+ router.get('/:aeid/:version/size', (req, res) => {
   const { aeid, version } = req.params
   const size = FileSize(aeid, version)
   res.json(size)
+})
+
+/**
+ * GET Request
+ * URL: /fw/:aeid/:version/download
+ * QUERY: {
+ *  aeid,
+ *  version
+ * }
+ */
+router.get('/:aeid/:version/download', (req, res) => {
+  const { aeid, version } = req.params
+  const fileName = `${aeid}_${version}.bin`
+  const filePath = path.resolve(__dirname, `../static/${aeid}/releases/${fileName}`)
+  res.download(filePath, fileName)
 })
 
 /**
@@ -91,9 +108,9 @@ router.post('/rawfile', verified, (req, res) => {
  *  aeid
  * }
  */
-router.post('/check', (req, res) => {
+router.post('/check', async (req, res) => {
   const { aeid } = req.body
-  const data = Versions(aeid)
+  const data = await Versions(aeid)
   if (data) {
     res.json(data)
   } else {

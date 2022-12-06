@@ -16,7 +16,7 @@ module.exports.FileSize = (aeid, version) => {
   return 0
 }
 
-module.exports.Versions = (aeId) => {
+module.exports.Versions = async (aeId) => {
   /**
    * Return AEID/releases folder file 
    * versions list by sort and next patch version:
@@ -25,10 +25,10 @@ module.exports.Versions = (aeId) => {
   var versions = []
   const resolveDir = path.resolve(__dirname, `../static/${aeId}/releases`)
   if (fs.existsSync(resolveDir)) {
-    const files = fs.readdirSync(resolveDir);
+    const files = await fs.readdirSync(resolveDir);
     files.forEach(file => {
       if (path.extname(file) == ".bin") {
-        const { aeid, version } = getParsedData(file)
+        const { aeid, version } = getParsedAeidVersion(file)
         if (aeId == aeid) {
           versions.push(version)
         }

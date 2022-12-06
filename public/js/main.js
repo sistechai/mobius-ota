@@ -38,10 +38,10 @@ createApp({
       //axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
       axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
     },
-    onCheckVersion() {
+    async onCheckVersion() {
       this.result = null
       this.isCheckLoading = true
-      axios.post('/fw/check', this.checkForm).then((res) => {
+      await axios.post('/fw/check', this.checkForm).then((res) => {
         this.result = res.data
         this.isCheckLoading = false
       })
