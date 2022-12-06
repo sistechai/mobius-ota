@@ -13,7 +13,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 * @license: Htmlstream Libraries (https://htmlstream.com/)
 * Copyright 2021 Htmlstream
 */
-var dataAttributeName = 'data-hs-toggle-password-options';
+var dataAttributeName = 'data-toggle-password-options';
 var defaults = {
   classChangeTarget: null,
   defaultClass: null,

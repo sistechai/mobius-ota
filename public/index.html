@@ -7,7 +7,7 @@
   <title>Mobius OTA</title>
   <link href="css/bootstrap.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
-  <style data-hs-appearance-visability-styles="">[data-hs-theme-appearance]:not([data-hs-theme-appearance='default']){display:none!important;}</style>
+  <style data-appearance-visability-styles="">[data-theme-appearance]:not([data-theme-appearance='default']){display:none!important;}</style>
 </head>
 <body>
   <div id="app">
@@ -30,10 +30,10 @@
                 <form class="js-step-form">
                   <div class="mb-4">
                     <label for="aeIDLabel" class="form-label">
-                      AEID 
-                      <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="AEID info" data-bs-original-title="AEID info"></i>
+                      AE ID 
+                      <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" :aria-label="info.aeid" :data-bs-original-title="info.aeid"></i>
                     </label>
-                    <input v-model="checkForm.aeid" type="text" class="form-control" name="aeid" id="aeIDLabel" placeholder="Input device AE ID" aria-label="Input device AE ID">
+                    <input v-model="checkForm.aeid" type="text" class="form-control" name="aeid" id="aeIDLabel" placeholder="Input AEID" aria-label="Input AE ID">
                   </div>
                   <div class="mb-4" v-if="result">
                     <p><b>Next Version: </b>{{ result.nversion }}</p>
@@ -57,13 +57,13 @@
                   <div class="mb-4">
                     <label for="attachFileNewVersion" class="js-file-attach form-label">
                       File
-                      <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="File info" data-bs-original-title="File info"></i>
+                      <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" :aria-label="info.file" :data-bs-original-title="info.file"></i>
                     </label>
                     <input ref="file" v-on:change="handleFileUpload()" class="form-control" type="file" id="attachFileNewVersion">
                     <div v-if="0" id="attachFileNewVersion" class="js-dropzone dz-dropzone dz-dropzone-card dz-clickable">
                       <div class="dz-message">
-                        <img class="avatar avatar-xl avatar-4x3 mb-3" src="images/oc-browse.svg" alt="Image Description" data-hs-theme-appearance="default">
-                        <img class="avatar avatar-xl avatar-4x3 mb-3" src="images/oc-browse-light.svg" alt="Image Description" data-hs-theme-appearance="dark">
+                        <img class="avatar avatar-xl avatar-4x3 mb-3" src="images/oc-browse.svg" alt="Image Description" data-theme-appearance="default">
+                        <img class="avatar avatar-xl avatar-4x3 mb-3" src="images/oc-browse-light.svg" alt="Image Description" data-theme-appearance="dark">
       
                         <h5>
                           Drag and drop your file here
@@ -79,12 +79,12 @@
                     <div class="d-flex justify-content-between align-items-center">
                       <label class="form-label" for="uploadPassword">
                         Password
-                        <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Upload Password info" data-bs-original-title="Upload Password info"></i>
+                        <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" :aria-label="info.password" :data-bs-original-title="info.password"></i>
                       </label>
                     </div>
-                    <div class="input-group input-group-merge" data-hs-validation-validate-class>
+                    <div class="input-group input-group-merge" data-validation-validate-class>
                       <input v-model="form.password" type="password" class="js-toggle-password form-control form-control-lg" name="password" id="uploadPassword" placeholder="Input the right code" aria-label="Input the right code" required minlength="6"
-                            data-hs-toggle-password-options='{
+                            data-toggle-password-options='{
                             "target": "#changePassTarget",
                             "defaultClass": "bi-eye-slash",
                             "showClass": "bi-eye",

@@ -4,11 +4,19 @@ const semver = require('semver')
 const moment = require('moment')
 
 module.exports.ReadFirmware = (aeid, version) => {
+  /**
+   * Return the firmware file as Buffer
+   * /static/AEID/releases/AEID_VERSION.bin
+  */
   const filePath = path.resolve(__dirname, `../static/${aeid}/releases/${aeid}_${version}.bin`)
   return fs.readFileSync(filePath)
 }
 
 module.exports.FileSize = (aeid, version) => {
+  /**
+   * Return the firmware file size
+   * /static/AEID/releases/AEID_VERSION.bin
+  */
   const filePath = path.resolve(__dirname, `../static/${aeid}/releases/${aeid}_${version}.bin`)
   if (fs.existsSync(filePath)) {
     return fs.statSync(filePath).size

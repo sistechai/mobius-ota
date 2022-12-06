@@ -24452,7 +24452,7 @@ label.form-control {
 .navbar-section-hidden {
   position: relative;
 }
-.navbar[data-hs-header-options*="fixMoment"] {
+.navbar[data-header-options*="fixMoment"] {
   transition: 0.3s ease;
 }
 .navbar.navbar-untransitioned {
@@ -24471,7 +24471,7 @@ label.form-control {
 .navbar-fix-top {
   position: fixed;
 }
-.navbar.navbar-fix-top[data-hs-header-options*="effectCompensation"] {
+.navbar.navbar-fix-top[data-header-options*="effectCompensation"] {
   transition: none;
 }
 .offcanvas-header {

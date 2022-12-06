@@ -18,6 +18,11 @@ createApp({
         title: '',
         content: ''
       },
+      info: {
+        aeid: 'AEID - Application Entity ID',
+        file: 'Uploading new firmware version file. The filename must be in the format <AEID>_<VERSION>.bin format',
+        password: 'The password authentication used to upload the firmware version'
+      },
       result: null
     }
   },

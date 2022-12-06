@@ -9,11 +9,9 @@ const { Router } = require('express')
 const router = Router()
 
 /**
- * GET Request
- * URL: /fw/:aeid/version
- * QUERY: {
- *  aeid
- * }
+ * This function responding with the firmware version as character string
+ * @route GET /fw/:aeid/version
+ * @param { string } aeid.required - Application Entity ID
  */
 router.get('/:aeid/version', async (req, res) => {
   const { aeid } = req.params
@@ -27,12 +25,10 @@ router.get('/:aeid/version', async (req, res) => {
 })
 
 /**
- * GET Request
- * URL: /fw/:aeid/:version/size
- * QUERY: {
- *  aeid,
- *  version
- * }
+ * This function responding with the firmware file size
+ * @route GET /fw/:aeid/:version/size
+ * @param { string } aeid.required - Application Entity ID
+ * @param { string } version.required - Firmware version
  */
  router.get('/:aeid/:version/size', (req, res) => {
   const { aeid, version } = req.params
@@ -41,12 +37,10 @@ router.get('/:aeid/version', async (req, res) => {
 })
 
 /**
- * GET Request
- * URL: /fw/:aeid/:version/download
- * QUERY: {
- *  aeid,
- *  version
- * }
+ * This function responding with the firmware file
+ * @route GET /fw/:aeid/:version/download
+ * @param { string } aeid.required - Application Entity ID
+ * @param { string } version.required - Firmware version
  */
 router.get('/:aeid/:version/download', (req, res) => {
   const { aeid, version } = req.params
@@ -56,11 +50,11 @@ router.get('/:aeid/:version/download', (req, res) => {
 })
 
 /**
- * GET Request
- * URL: /fw/:aeid/:version/data/block
- * QUERY: {
- *  seq
- * }
+ * This function responding with the file contents of the k-th block of the firmware file
+ * @route GET /fw/:aeid/:version/data/block
+ * @param { string } aeid.required - Application Entity ID
+ * @param { string } version.required - Firmware version
+ * @param { string } seq.query.required - k-th block
  */
 router.get('/:aeid/:version/data/block', (req, res) => {
   const { aeid, version } = req.params
@@ -73,8 +67,6 @@ router.get('/:aeid/:version/data/block', (req, res) => {
     res.setHeader('Content-Disposition', 'attachment; filename=update.bin' )
     res.setHeader('Content-Length', data.length )
     res.writeHead(200)
-    or
-    res.download(file)
     */
     res.end(firmware.slice(seq, firmware.length))
   }
@@ -82,14 +74,11 @@ router.get('/:aeid/:version/data/block', (req, res) => {
 })
 
 /**
- * POST Request
- * URL: /fw/rawfile
- * Headers:
- *  Authorization: 'XPass password'
- * BODY: {
- *  aeid,
- *  file
- * }
+ * This function saving the uploaded file into a data folder with the filename provided
+ * @route POST /fw/rawfile
+ * @headers { Authorization } - XPass password
+ * @param { string } aeid.required - Application Entity ID
+ * @property { file } file.required - Raw data file
  */
 router.post('/rawfile', verified, (req, res) => {
   const upload = dataUpload.single('file')
@@ -102,11 +91,9 @@ router.post('/rawfile', verified, (req, res) => {
 })
 
 /**
- * POST Request
- * URL: /fw/check
- * BODY: {
- *  aeid
- * }
+ * This function responding with the firmware versions and next version of firmware patch
+ * @route POST /fw/check
+ * @param { string } aeid.required - Application Entity ID
  */
 router.post('/check', async (req, res) => {
   const { aeid } = req.body
@@ -119,13 +106,10 @@ router.post('/check', async (req, res) => {
 })
 
 /**
- * POST Request
- * URL: /fw/upload
- * Headers:
- *  Authorization: 'XPass password'
- * BODY: {
- *  file
- * }
+ * This function uploading firmware file
+ * @route POST /fw/upload
+ * @headers { Authorization } - XPass password
+ * @property { file } file.required - Raw data file
  */
 router.post('/upload', verified, function (req, res) {
   const upload = fileUpload.single('file')
