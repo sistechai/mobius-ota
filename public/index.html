@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobius OTA</title>
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+  <style data-hs-appearance-visability-styles="">[data-hs-theme-appearance]:not([data-hs-theme-appearance='default']){display:none!important;}</style>
+</head>
+<body>
+  <div id="app">
+    <main class="form-signin w-75 m-auto">
+      <div class="content container-fluid">
+        <div class="page-header pt-5">
+          <h1 class="page-header-title text-center">
+            Mobius OTA
+          </h1>
+        </div>
+        <div class="row justify-content-lg-center">
+          <div class="col-lg-8">
+            <div class="card mb-3 mb-lg-5">
+              <div class="card-header">
+                <h4 class="card-header-title">
+                  Current Version
+                </h4>
+              </div>
+              <div class="card-body">
+                <form class="js-step-form">
+                  <div class="mb-4">
+                    <label for="aeIDLabel" class="form-label">
+                      AEID 
+                      <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="AEID info" data-bs-original-title="AEID info"></i>
+                    </label>
+                    <input v-model="checkForm.aeid" type="text" class="form-control" name="aeid" id="aeIDLabel" placeholder="Input device AE ID" aria-label="Input device AE ID">
+                  </div>
+                  <div class="mb-4" v-if="result">
+                    <p><b>Next Version: </b>{{ result.nversion }}</p>
+                    <p><b>All Version: </b>{{ result.versions }}</p>
+                  </div>
+                  <button @click="onCheckVersion()" type="button" class="btn btn-outline-primary">
+                    <span v-if="isCheckLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Check
+                  </button>
+                </form>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-header-title">
+                  Upload Version
+                </h4>
+              </div>
+              <div class="card-body">
+                <form class="js-step-form">
+                  <div class="mb-4">
+                    <label for="attachFileNewVersion" class="js-file-attach form-label">
+                      File
+                      <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="File info" data-bs-original-title="File info"></i>
+                    </label>
+                    <input ref="file" v-on:change="handleFileUpload()" class="form-control" type="file" id="attachFileNewVersion">
+                    <div v-if="0" id="attachFileNewVersion" class="js-dropzone dz-dropzone dz-dropzone-card dz-clickable">
+                      <div class="dz-message">
+                        <img class="avatar avatar-xl avatar-4x3 mb-3" src="images/oc-browse.svg" alt="Image Description" data-hs-theme-appearance="default">
+                        <img class="avatar avatar-xl avatar-4x3 mb-3" src="images/oc-browse-light.svg" alt="Image Description" data-hs-theme-appearance="dark">
+      
+                        <h5>
+                          Drag and drop your file here
+                        </h5>
+      
+                        <p class="mb-2">or</p>
+      
+                        <span class="btn btn-white btn-sm">Browse files</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <label class="form-label" for="uploadPassword">
+                        Password
+                        <i class="bi-question-circle text-body ms-1" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Upload Password info" data-bs-original-title="Upload Password info"></i>
+                      </label>
+                    </div>
+                    <div class="input-group input-group-merge" data-hs-validation-validate-class>
+                      <input v-model="form.password" type="password" class="js-toggle-password form-control form-control-lg" name="password" id="uploadPassword" placeholder="Input the right code" aria-label="Input the right code" required minlength="6"
+                            data-hs-toggle-password-options='{
+                            "target": "#changePassTarget",
+                            "defaultClass": "bi-eye-slash",
+                            "showClass": "bi-eye",
+                            "classChangeTarget": "#changePassIcon"
+                          }'>
+                      <a id="changePassTarget" class="input-group-append input-group-text" href="javascript:;">
+                        <i id="changePassIcon" class="bi-eye"></i>
+                      </a>
+                    </div>
+                    <span class="invalid-feedback">Please enter a valid password.</span>
+                  </div>
+                  <button @click="onUploadVersion()" type="button" class="btn btn-outline-primary">
+                    <span v-if="isUploadLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Upload
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <div v-show="toast.show" class="toast toast-show fade show" role="alert" data-bs-autohide="true" data-bs-delay="300" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
+      <div class="toast-header p-2">
+        <div class="d-flex align-items-center flex-grow-1">
+          <div class="flex-grow-1 ms-3">
+            <h5 class="mb-0">{{ toast.title }}</h5>
+          </div>
+          <div class="text-end">
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      </div>
+      <div class="toast-body">
+        <p class="h4 ms-2" :class="toast.type">
+          {{ toast.content }}
+        </p>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js" integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="js/hs-toggle-password.js"></script>
+  <script src="js/main.js"></script>
+  <script type="module">
+    (function() {
+      // initialization of toggle password
+      new HSTogglePassword('.js-toggle-password')
+      // Create an example toast
+      const toastElList = [].slice.call(document.querySelectorAll('.toast'))
+      toastElList.map(function (el, option) {
+        return new bootstrap.Toast(el, option)
+      })
+      // Create an example popover
+      document.querySelectorAll(
+        '[data-bs-toggle="popover"]'
+      ).forEach(popover => {
+        new bootstrap.Popover(popover)
+      })
+      // Create an example tooltip
+      document.querySelectorAll(
+        '[data-bs-toggle="tooltip"]'
+      ).forEach(tooltip => {
+        new bootstrap.Tooltip(tooltip)
+      })
+    })()
+  </script>
+</body>
+</html>
