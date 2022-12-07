@@ -2,14 +2,17 @@ const fs = require('fs')
 const path = require('path')
 const semver = require('semver')
 const moment = require('moment')
+const mime = require('mime-types')
 
 module.exports.ReadFirmware = (aeid, version) => {
   /**
-   * Return the firmware file as Buffer
+   * Return the firmware file as Buffer and mime type
    * /static/AEID/releases/AEID_VERSION.bin
   */
   const filePath = path.resolve(__dirname, `../static/${aeid}/releases/${aeid}_${version}.bin`)
-  return fs.readFileSync(filePath)
+  const firmware = fs.readFileSync(filePath)
+  const mimetype = mime.lookup(filePath)
+  return { firmware, mimetype }
 }
 
 module.exports.FileSize = (aeid, version) => {
@@ -74,24 +77,4 @@ const getParsedData = (filename) => {
   const [name, aeid] = (fname.match(/(.+)+\-(.+)/) || ['', fname]).slice(1)
   return { name, aeid, ext }
 }
-
 module.exports.ParsedData = getParsedData
-
-/**
-semver.diff('3.4.5', '4.3.7') //'major'
-semver.diff('3.4.5', '3.3.7') //'minor'
-semver.gte('3.4.8', '3.4.7') //true
-semver.ltr('3.4.8', '3.4.7') //false
-
-semver.valid('1.2.3') // '1.2.3'
-semver.valid('a.b.c') // null
-semver.clean(' =v1.2.3 ') // '1.2.3'
-semver.satisfies('1.2.3', '1.x || >=2.5.0 || 5.0.0 - 7.2.3') // true
-semver.gt('1.2.3', '9.8.7') // false
-semver.lt('1.2.3', '9.8.7') // true
-
-var versions = [ '1.2.3', '3.4.5', '1.0.2' ]
-var max = versions.sort(semver.rcompare)[0]
-var min = versions.sort(semver.compare)[0]
-var max = semver.maxSatisfying(versions, '*')
-*/

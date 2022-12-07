@@ -1,12 +1,15 @@
 
-const { Versions, FileSize, ReadFirmware } = require('../helpers')
+const { Versions, FileSize } = require('../helpers')
 const { verified } = require('../middleware/passport-upload')
 const fileUpload = require('../middleware/file-upload')
 const dataUpload = require('../middleware/data-upload')
 
+const fs = require('fs')
 const path = require('path')
 const { Router } = require('express')
 const router = Router()
+
+const MAX_SEND_SIZE = 4096
 
 /**
  * This function responding with the firmware version as character string
@@ -57,20 +60,42 @@ router.get('/:aeid/:version/download', (req, res) => {
  * @param { string } seq.query.required - k-th block
  */
 router.get('/:aeid/:version/data/block', (req, res) => {
-  const { aeid, version } = req.params
-  const { seq } = req.query
-  console.log("Requesting firmware seq: " + seq)
-  const firmware = ReadFirmware(aeid, version);
-  if (seq <= firmware.length) {
-    /*
-    res.setHeader('Content-Type', 'application/octet-stream' )
-    res.setHeader('Content-Disposition', 'attachment; filename=update.bin' )
-    res.setHeader('Content-Length', data.length )
-    res.writeHead(200)
-    */
-    res.end(firmware.slice(seq, firmware.length))
+  if(req.params.hasOwnProperty('aeid') && req.params.hasOwnProperty('version')) {
+    const { aeid, version } = req.params
+    const filePath = path.resolve(__dirname, `../static/${aeid}/releases/${aeid}_${version}.bin`)
+    if (req.query.hasOwnProperty('seq')) {
+      const seq = parseInt(req.query.seq)
+      const size = FileSize(aeid, version)
+      var n = parseInt(size / MAX_SEND_SIZE)
+      var data_length = MAX_SEND_SIZE
+      if(seq == n + 1) {
+        data_length = size - ((seq - 1) * MAX_SEND_SIZE)
+      }
+      fs.open(filePath, 'r', function(status, fd) {
+        if (status) {
+          console.log(`[Patch] : ${status.message}`)
+          return
+        }
+        var buffer = Buffer.alloc(data_length)
+        fs.read(fd, buffer, 0, data_length, (seq - 1) * MAX_SEND_SIZE, function(err, num, buff) {
+          res.writeHead(200, {
+            'Content-Type': 'application/octet-stream',
+            'Content-disposition': `attachment; filename=fragment${seq}`,
+            'Seq': seq,
+            'Content-Length': buff.length,
+            'Access-Control-Expose-Headers' : 'Is-Next, Seq'
+          })
+          res.end(Buffer.from(buff, 'binary'));
+          console.log(`[Patch] : ${aeid} send file (${seq}/${n}) size : ${buffer.length} | global : ${MAX_SEND_SIZE}`);
+          return
+        })
+      })
+    } else {
+      res.status(401).send("Missing sequence number!")
+    }
+  } else {
+    res.status(401).send("AE ID or Version couldn't match!")
   }
-  //, next next()
 })
 
 /**
