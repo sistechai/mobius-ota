@@ -38,16 +38,15 @@ npm run build or yarn build
 ## Routes
 
 ```js
-@route GET /fw/:aeid/version
-@route GET /fw/:aeid/:version/size
-@route GET /fw/:aeid/:version/download
-@route GET /fw/:aeid/:version/data/block?seq=:k
-
-@route POST /fw/:aeid/rawfile
+1. @route GET /fw/:aeid/version
+2. @route GET /fw/:aeid/:version/size
+3. @route GET /fw/:aeid/:version/download
+4. @route GET /fw/:aeid/:version/data/block?seq=:k
+5. @route POST /fw/:aeid/rawfile
 
 ```
   
-### Get Last Firmware Version:
+### 1. Get Last Firmware Version:
 ```js
 /**
  * This function responding with the firmware version as character string
@@ -67,7 +66,7 @@ HTTP/1.1 200 OK
 version
 ```
 
-### Get Last Firmware Size:
+### 2. Get Last Firmware Size:
 ```js
 /**
  * This function responding with the firmware file size
@@ -88,7 +87,7 @@ HTTP/1.1 200 OK
 size
 ```
 
-### Download Last Firmware:
+### 3. Download Last Firmware:
 ```js
 /**
  * This function responding with the firmware file
@@ -111,7 +110,7 @@ Content-Length: Size
 file
 ```
 
-### Get k-th Block of The Firmware File:
+### 4. Get k-th Block of The Firmware File:
 ```js
 /**
  * This function responding with the file contents of the k-th block of the firmware file
@@ -138,7 +137,7 @@ Seq: k
 buffer
 ```
 
-### Upload Firmware Raw Data:
+### 5. Upload Firmware Raw Data:
 ```js
 /**
  * This function saving the uploaded file into a data folder with the filename provided
