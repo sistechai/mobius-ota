@@ -2,10 +2,10 @@
   "name": "mobius-ota",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon app.js",
-    "build": "cross-env NODE_ENV=production node app.js",
+    "build": "cross-env NODE_ENV=production pm2 start app.js --name=mobius-ota",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -15,6 +15,7 @@
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "http": "^0.0.1-security",
     "https": "^1.0.0",
@@ -23,7 +24,7 @@
     "multer": "^1.4.5-lts.1",
     "passport": "^0.5.0",
     "passport-headerapikey": "^1.2.2",
-    "semver": "^7.3.8"
+    "pm2": "^5.2.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

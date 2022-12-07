@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const semver = require('semver')
 const moment = require('moment')
 const mime = require('mime-types')
 
@@ -45,14 +44,23 @@ module.exports.Versions = async (aeId) => {
         }
       }
     })
-    versions = versions.sort(semver.rcompare)
-    nversion = semver.inc(versions[0], 'patch')
+    versions = versions.sort(rcompare)
     return {
-      versions: versions,
-      nversion: nversion
+      versions: versions
     }
   }
   return null
+}
+
+function rcompare(a, b) {
+  am = a.trim().match(/(\d+)\.(\d+)\.(\d+).(\d+)/)
+  bm = b.trim().match(/(\d+)\.(\d+)\.(\d+).(\d+)/)
+  for (let i = 1; i < 5; i++) {
+    if (parseInt(am[i]) !== parseInt(bm[i])) {
+      return parseInt(am[i]) > parseInt(bm[i]) ? -1 : 1
+    }
+  }
+  return 0
 }
 
 const getParsedAeidVersion = (filename) => {

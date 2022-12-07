@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const semver = require('semver')
 const multer = require('multer')
 const { ParsedAeidVersion } = require('../helpers')
 
@@ -14,14 +13,16 @@ const storage = multer.diskStorage({
     cb(null, resolveDir)
   },
   filename(_, file, cb) {
+    /*
     const { aeid, version, ext } = ParsedAeidVersion(file.originalname)
     const resolveDir = path.resolve(__dirname, `../static/${aeid}/releases`)
     if (fs.existsSync(path.join(resolveDir, file.originalname))) {
-      const nversion = semver.inc(version, 'patch')
+      const nversion = NextVersion(version)
       cb(null, `${aeid}_${nversion}.${ext}`)
     } else {
       cb(null, file.originalname)
-    }
+    }*/
+    cb(null, file.originalname)
   }
 })
 

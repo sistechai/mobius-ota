@@ -3,6 +3,7 @@ const http = require('http')
 const cors = require('cors')
 const express = require('express')
 const bodyParser = require('body-parser')
+require('dotenv').config()
 
 const app = express()
 const routes = require('./routes')
@@ -19,6 +20,7 @@ app.use(express.static(path.join(__dirname, 'static')))
 // main routes
 app.use('/fw', routes)
 
+// web page
 app.get('/', (req, res) => {
   res.sendFile('index.html')
 })
@@ -28,8 +30,7 @@ app.get("*", (req, res) => {
   res.status(404).json({ message: "Route Not Found." })
 })
 
-PORT = 7580
-
-server.listen(PORT, () => {
-  console.log(`Server started on port ${PORT} :)`)
+// run servre
+server.listen(process.env.PORT, () => {
+  console.log(`Server started on port ${process.env.PORT} :)`)
 })

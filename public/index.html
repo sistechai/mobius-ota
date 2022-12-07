@@ -23,7 +23,7 @@
             <div class="card mb-3 mb-lg-5">
               <div class="card-header">
                 <h4 class="card-header-title">
-                  Current Version
+                  Check Version
                 </h4>
               </div>
               <div class="card-body">
@@ -36,8 +36,8 @@
                     <input v-model="checkForm.aeid" type="text" class="form-control" name="aeid" id="aeIDLabel" placeholder="Input AEID" aria-label="Input AE ID">
                   </div>
                   <div class="mb-4" v-if="result">
-                    <p><b>Next Version: </b>{{ result.nversion }}</p>
-                    <p><b>All Version: </b>{{ result.versions }}</p>
+                    <p><b>Last Version: </b>{{ result.versions[0] }}</p>
+                    <p><b>All Versions: </b>{{ result.versions }}</p>
                   </div>
                   <button @click="onCheckVersion()" type="button" class="btn btn-outline-primary">
                     <span v-if="isCheckLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>

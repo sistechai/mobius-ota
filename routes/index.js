@@ -7,9 +7,10 @@ const dataUpload = require('../middleware/data-upload')
 const fs = require('fs')
 const path = require('path')
 const { Router } = require('express')
+const e = require('express')
 const router = Router()
 
-const MAX_SEND_SIZE = 4096
+const MAX_SEND_SIZE = parseInt(process.env.MAX_SEND_SIZE)
 
 /**
  * This function responding with the firmware version as character string
@@ -18,12 +19,16 @@ const MAX_SEND_SIZE = 4096
  */
 router.get('/:aeid/version', async (req, res) => {
   const { aeid } = req.params
-  const data = await Versions(aeid)
-  if (data) {
-    const { versions, nversion } = data
-    res.json(versions[0])
+  if(req.params.hasOwnProperty('aeid')) {
+    const data = await Versions(aeid)
+    if (data) {
+      const { versions } = data
+      res.json(versions[0])
+    } else {
+      res.status(403).send("Could not find firmware file!")
+    }
   } else {
-    res.status(403).send('AEID incorrect!')
+    res.status(403).send("AE ID couldn't match!")
   }
 })
 
@@ -34,9 +39,13 @@ router.get('/:aeid/version', async (req, res) => {
  * @param { string } version.required - Firmware version
  */
  router.get('/:aeid/:version/size', (req, res) => {
-  const { aeid, version } = req.params
-  const size = FileSize(aeid, version)
-  res.json(size)
+  if(req.params.hasOwnProperty('aeid') && req.params.hasOwnProperty('version')) {
+    const { aeid, version } = req.params
+    const size = FileSize(aeid, version)
+    res.json(size)
+  } else {
+    res.status(401).send("AE ID or Version couldn't match!")
+  }
 })
 
 /**
@@ -46,10 +55,14 @@ router.get('/:aeid/version', async (req, res) => {
  * @param { string } version.required - Firmware version
  */
 router.get('/:aeid/:version/download', (req, res) => {
-  const { aeid, version } = req.params
-  const fileName = `${aeid}_${version}.bin`
-  const filePath = path.resolve(__dirname, `../static/${aeid}/releases/${fileName}`)
-  res.download(filePath, fileName)
+  if(req.params.hasOwnProperty('aeid') && req.params.hasOwnProperty('version')) {
+    const { aeid, version } = req.params
+    const fileName = `${aeid}_${version}.bin`
+    const filePath = path.resolve(__dirname, `../static/${aeid}/releases/${fileName}`)
+    res.download(filePath, fileName)
+  } else {
+    res.status(401).send("AE ID or Version couldn't match!")
+  }
 })
 
 /**
@@ -80,7 +93,7 @@ router.get('/:aeid/:version/data/block', (req, res) => {
         fs.read(fd, buffer, 0, data_length, (seq - 1) * MAX_SEND_SIZE, function(err, num, buff) {
           res.writeHead(200, {
             'Content-Type': 'application/octet-stream',
-            'Content-disposition': `attachment; filename=fragment${seq}`,
+            'Content-Disposition': `attachment; filename=fragment${seq}`,
             'Seq': seq,
             'Content-Length': buff.length,
             'Access-Control-Expose-Headers' : 'Is-Next, Seq'
@@ -100,12 +113,12 @@ router.get('/:aeid/:version/data/block', (req, res) => {
 
 /**
  * This function saving the uploaded file into a data folder with the filename provided
- * @route POST /fw/rawfile
- * @headers { Authorization } - XPass password
+ * @route POST /fw/:aeid/rawfile
+ * NOTE: not added @headers { Authorization } - XPass password|verified,
  * @param { string } aeid.required - Application Entity ID
  * @property { file } file.required - Raw data file
  */
-router.post('/rawfile', verified, (req, res) => {
+router.post('/:aeid/rawfile', (req, res) => {
   const upload = dataUpload.single('file')
   upload(req, res, function(err) {
     if (err) {
@@ -122,11 +135,15 @@ router.post('/rawfile', verified, (req, res) => {
  */
 router.post('/check', async (req, res) => {
   const { aeid } = req.body
-  const data = await Versions(aeid)
-  if (data) {
-    res.json(data)
+  if(req.body.hasOwnProperty('aeid')) {
+    const data = await Versions(aeid)
+    if (data) {
+      res.json(data)
+    } else {
+      res.status(403).send("Could not find firmware file!")
+    }
   } else {
-    res.status(403).send('AEID incorrect!')
+    res.status(401).send("AE ID couldn't match!")
   }
 })
 

@@ -1,17 +1,18 @@
 const fs = require('fs')
 const path = require('path')
-const semver = require('semver')
 const multer = require('multer')
-const { ParsedData } = require('../helpers')
 
 const storage = multer.diskStorage({
-  destination(_, file, cb) {
-    const { aeid } = ParsedData(file.originalname)
+  destination(req, _, cb) {
+    const { aeid } = req.params
     const resolveDir = path.resolve(__dirname, `../static/${aeid}/data`)
     if (!fs.existsSync(resolveDir)) {
       fs.mkdirSync(resolveDir, { recursive: true });
     }
     cb(null, resolveDir)
+  },
+  filename(_, file, cb) {
+    cb(null, file.originalname)
   }
 })
 
